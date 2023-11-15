@@ -1,35 +1,22 @@
 package com.radioroam.android.ui.screens
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,17 +24,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.MediaItem
 import com.radioroam.android.domain.state.RadioStationsUiState
+import com.radioroam.android.ui.components.HomeTopAppBar
 import com.radioroam.android.ui.components.RadioStationList
 import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
-import com.radioroam.android.ui.components.player.PlayerView
 import com.radioroam.android.ui.components.player.rememberManagedExoPlayer
 import com.radioroam.android.ui.state.PlayerState
 import com.radioroam.android.ui.state.state
@@ -62,17 +47,13 @@ fun HomeScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    when (state) {
-        is RadioStationsUiState.Loading -> {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(text = "Radio Stations")
-                        },
-                    )
-                }
-            ) { paddingValues ->
+    Scaffold(
+        topBar = {
+            HomeTopAppBar()
+        }
+    ) { paddingValues ->
+        when (state) {
+            is RadioStationsUiState.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -84,107 +65,67 @@ fun HomeScreen(
                     )
                 }
             }
+            is RadioStationsUiState.Success -> {
+                val items = (state as RadioStationsUiState.Success).data
 
-        }
-        is RadioStationsUiState.Success -> {
-            val items = (state as RadioStationsUiState.Success).data
+                val player by rememberManagedExoPlayer()
 
-            val player by rememberManagedExoPlayer()
-
-            var playerState: PlayerState? by remember {
-                mutableStateOf(player?.state())
-            }
-
-            val currentPlayingStream by viewModel.currentPlayingMedia.collectAsStateWithLifecycle()
-
-            DisposableEffect(currentPlayingStream, player) {
-                if (player != null && currentPlayingStream != null) {
-                    player?.run {
-                        setMediaItem(currentPlayingStream!!)
-                        prepare()
-                        playerState = player?.state()
-                    }
-
+                var playerState: PlayerState? by remember {
+                    mutableStateOf(player?.state())
                 }
-                onDispose {
-                    playerState?.dispose()
-                }
-            }
 
-            val sheetState = rememberStandardBottomSheetState(
-                initialValue = SheetValue.Hidden,
-                skipHiddenState = false
-            )
+                val currentPlayingStream by viewModel.currentPlayingMedia.collectAsStateWithLifecycle()
 
-            val sheetScaffoldState = rememberBottomSheetScaffoldState(
-                bottomSheetState = sheetState
-            )
-
-            val coroutineScope = rememberCoroutineScope()
-
-            BackHandler(sheetState.currentValue == SheetValue.Expanded) {
-                coroutineScope.launch {
-                    sheetState.hide()
-                }
-            }
-
-            val sheetShape = if (sheetState.currentValue == SheetValue.Expanded)
-                RoundedCornerShape(0.dp)
-            else
-                RoundedCornerShape(8.dp)
-
-            BottomSheetScaffold(
-                sheetShape = sheetShape,
-                sheetSwipeEnabled = false,
-                sheetDragHandle = null,
-                sheetContent = {
-                    if (playerState != null) {
-                        val configuration = LocalConfiguration.current
-
-                        val screenHeight = configuration.screenHeightDp.dp
-//                        val heightInDp by animateDpAsState(
-//                            targetValue = when (sheetState.currentValue) {
-//                                SheetValue.Expanded -> screenHeight
-//                                SheetValue.PartiallyExpanded -> 60.dp
-//                                else -> 0.dp
-//                            },
-//                            animationSpec = tween(durationMillis = 300),
-//                            label = "Expand/Collapse Animation"
-//                        )
-                        val heightInDp = when (sheetState.currentValue) {
-                            SheetValue.Expanded -> screenHeight
-                            SheetValue.PartiallyExpanded -> 60.dp
-                            else -> 0.dp
+                DisposableEffect(currentPlayingStream, player) {
+                    if (player != null && currentPlayingStream != null) {
+                        player?.run {
+                            setMediaItem(currentPlayingStream!!)
+                            prepare()
+                            playerState = player?.state()
                         }
-                        PlayerView(
+
+                    }
+                    onDispose {
+                        playerState?.dispose()
+                    }
+                }
+
+                val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+                val coroutineScope = rememberCoroutineScope()
+
+                var openBottomSheet by remember { mutableStateOf(false) }
+
+                if (openBottomSheet) {
+                    ModalBottomSheet(
+                        modifier = Modifier
+                            .padding(paddingValues),
+                        onDismissRequest = {
+                            openBottomSheet = false
+                        },
+                        shape = RectangleShape,
+                        sheetState = sheetState,
+                        dragHandle = null,
+                    ) {
+                        ExpandedPlayerView(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(heightInDp),
+                                .background(MaterialTheme.colorScheme.surface),
                             playerState = playerState!!,
-                            sheetValue = sheetState.currentValue,
-                            onExpandCallback = {
+                            onCollapseTap = {
                                 coroutineScope.launch {
-                                    sheetState.expand()
-                                }
+                                    sheetState.hide()
+//                                    if (sheetState.isVisible.not())
+                                        openBottomSheet = false
+                                }/*.invokeOnCompletion {
+                                    if (sheetState.isVisible.not())
+                                        openBottomSheet = false
+                                }*/
                             },
-                            onCollapseCallback = {
-                                coroutineScope.launch {
-                                    sheetState.partialExpand()
-                                }
-                            }
+                            onMenuTap = {}
                         )
                     }
-                },
-                scaffoldState = sheetScaffoldState,
-                sheetPeekHeight = if (playerState != null) 60.dp else 0.dp,
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(text = "Radio Stations")
-                        },
-                    )
                 }
-            ) { paddingValues ->
+
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -192,21 +133,38 @@ fun HomeScreen(
                         modifier = Modifier.padding(paddingValues),
                         items = items,
                         onItemClick = { item ->
-                            coroutineScope.launch {
-                                viewModel.onMediaChanged(item)
-                                if (sheetState.isVisible.not())
-                                    sheetState.partialExpand()
-                            }
+                            viewModel.onMediaChanged(item)
                         }
                     )
+
+                    if (playerState != null) {
+                        CompactPlayerView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(60.dp)
+                                .align(Alignment.BottomCenter)
+                                .clickable {
+                                    coroutineScope.launch {
+                                        sheetState.expand()
+                                        openBottomSheet = true
+                                    }/*.invokeOnCompletion {
+                                        if (sheetState.isVisible)
+                                            openBottomSheet = true
+                                    }*/
+                                },
+                            playerState = playerState!!
+                        )
+                    }
                 }
+
             }
+            else -> {
 
-        }
-        else -> {
-
+            }
         }
     }
+
+
 }
 
 @Preview

@@ -68,6 +68,7 @@ dependencies {
     val ktorVersion = "2.3.3"
     val koinVersion = "3.5.0"
     val media3Version = "1.1.1"
+    val coroutinesVersion = "1.7.3"
 
     // Desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
@@ -89,7 +90,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
     // Ktor
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -119,6 +120,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
