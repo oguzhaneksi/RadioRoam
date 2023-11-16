@@ -1,6 +1,12 @@
 package com.radioroam.android.ui.components.player
 
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -11,7 +17,9 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import androidx.media3.ui.R
 import coil.compose.AsyncImage
@@ -20,15 +28,17 @@ import coil.compose.AsyncImage
 fun PlayPauseButton(
     modifier: Modifier = Modifier,
     isPlaying: Boolean,
+    iconTint: Color = MaterialTheme.colorScheme.onSurface,
     onTogglePlayPause: () -> Unit
 ) {
     IconButton(
+        modifier = modifier,
         onClick = {
             onTogglePlayPause()
         }
     ) {
         Icon(
-            modifier = modifier,
+            modifier = Modifier.fillMaxSize(fraction = .8f),
             painter = painterResource(
                 id = if (isPlaying)
                     R.drawable.exo_icon_pause
@@ -36,7 +46,7 @@ fun PlayPauseButton(
                     R.drawable.exo_icon_play
             ),
             contentDescription = if (isPlaying) "Pause" else "Play",
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = iconTint
         )
     }
 }
@@ -46,11 +56,16 @@ fun MiniPlayerArtworkView(
     modifier: Modifier = Modifier,
     artworkUri: Uri?
 ) {
-    AsyncImage(
+    Card(
         modifier = modifier,
-        model = artworkUri,
-        contentDescription = null,
-    )
+        shape = RoundedCornerShape(4.dp)
+    ) {
+        AsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            model = artworkUri,
+            contentDescription = null,
+        )
+    }
 }
 
 @Composable

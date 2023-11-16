@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -98,18 +98,14 @@ fun HomeScreen(
 
                 if (openBottomSheet) {
                     ModalBottomSheet(
-                        modifier = Modifier
-                            .padding(paddingValues),
                         onDismissRequest = {
                             openBottomSheet = false
                         },
                         shape = RectangleShape,
                         sheetState = sheetState,
-                        dragHandle = null,
                     ) {
                         ExpandedPlayerView(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.surface),
+                            modifier = Modifier,
                             playerState = playerState!!,
                             onCollapseTap = {
                                 coroutineScope.launch {

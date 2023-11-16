@@ -71,7 +71,8 @@ fun CompactPlayerView(
                 }
             }
             PlayPauseButton(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp),
                 isPlaying = playerState.isPlaying
             ) {
                 with(playerState.player) {
