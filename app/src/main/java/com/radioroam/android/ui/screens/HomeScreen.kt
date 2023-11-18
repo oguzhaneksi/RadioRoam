@@ -1,17 +1,13 @@
 package com.radioroam.android.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -31,9 +27,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radioroam.android.domain.state.RadioStationsUiState
 import com.radioroam.android.ui.components.HomeTopAppBar
 import com.radioroam.android.ui.components.RadioStationList
+import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
-import com.radioroam.android.ui.components.player.rememberManagedExoPlayer
 import com.radioroam.android.ui.state.PlayerState
 import com.radioroam.android.ui.state.state
 import com.radioroam.android.ui.viewmodel.HomeViewModel
@@ -68,20 +64,21 @@ fun HomeScreen(
             is RadioStationsUiState.Success -> {
                 val items = (state as RadioStationsUiState.Success).data
 
-                val player by rememberManagedExoPlayer()
+                val mediaController by rememberManagedMediaController()
 
                 var playerState: PlayerState? by remember {
-                    mutableStateOf(player?.state())
+                    mutableStateOf(mediaController?.state())
                 }
 
                 val currentPlayingStream by viewModel.currentPlayingMedia.collectAsStateWithLifecycle()
 
-                DisposableEffect(currentPlayingStream, player) {
-                    if (player != null && currentPlayingStream != null) {
-                        player?.run {
+                DisposableEffect(currentPlayingStream, mediaController) {
+                    if (mediaController != null && currentPlayingStream != null) {
+                        mediaController?.run {
                             setMediaItem(currentPlayingStream!!)
                             prepare()
-                            playerState = player?.state()
+                            play()
+                            playerState = mediaController?.state()
                         }
 
                     }
@@ -110,12 +107,8 @@ fun HomeScreen(
                             onCollapseTap = {
                                 coroutineScope.launch {
                                     sheetState.hide()
-//                                    if (sheetState.isVisible.not())
-                                        openBottomSheet = false
-                                }/*.invokeOnCompletion {
-                                    if (sheetState.isVisible.not())
-                                        openBottomSheet = false
-                                }*/
+                                    openBottomSheet = false
+                                }
                             },
                             onMenuTap = {}
                         )
@@ -143,10 +136,7 @@ fun HomeScreen(
                                     coroutineScope.launch {
                                         sheetState.expand()
                                         openBottomSheet = true
-                                    }/*.invokeOnCompletion {
-                                        if (sheetState.isVisible)
-                                            openBottomSheet = true
-                                    }*/
+                                    }
                                 },
                             playerState = playerState!!
                         )
