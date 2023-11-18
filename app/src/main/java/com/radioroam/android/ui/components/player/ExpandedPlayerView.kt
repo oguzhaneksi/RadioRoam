@@ -35,7 +35,9 @@ fun ExpandedPlayerView(
     modifier: Modifier = Modifier,
     playerState: PlayerState,
     onCollapseTap: () -> Unit,
-    onMenuTap: () -> Unit
+    onMenuTap: () -> Unit,
+    onPrevClick: () -> Unit,
+    onNextClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -48,7 +50,11 @@ fun ExpandedPlayerView(
         )
         PlayerArtwork(playerState = playerState)
         PlayerTitle(playerState = playerState)
-        PlayerControls(playerState = playerState)
+        PlayerControls(
+            playerState = playerState,
+            onPrevClick = onPrevClick,
+            onNextClick = onNextClick
+        )
     }
 }
 
@@ -110,7 +116,11 @@ private fun PlayerTitle(playerState: PlayerState) {
 }
 
 @Composable
-private fun PlayerControls(playerState: PlayerState) {
+private fun PlayerControls(
+    playerState: PlayerState,
+    onPrevClick: () -> Unit,
+    onNextClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,7 +128,14 @@ private fun PlayerControls(playerState: PlayerState) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // TODO previous button will be added
+        PreviousButton(
+            modifier = Modifier
+                .size(64.dp)
+                .padding(8.dp),
+            iconTint = MaterialTheme.colorScheme.onSurface
+        ) {
+            onPrevClick()
+        }
         PlayPauseButton(
             modifier = Modifier
                 .size(64.dp)
@@ -131,7 +148,14 @@ private fun PlayerControls(playerState: PlayerState) {
                 playWhenReady = !playWhenReady
             }
         }
-        // TODO next button will be added
+        NextButton(
+            modifier = Modifier
+                .size(64.dp)
+                .padding(8.dp),
+            iconTint = MaterialTheme.colorScheme.onSurface
+        ) {
+            onNextClick()
+        }
     }
 }
 

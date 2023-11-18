@@ -92,3 +92,41 @@ fun TimeBar(
         valueRange = 0f..duration.longValue.toFloat()
     )
 }
+
+@Composable
+fun PreviousButton(
+    modifier: Modifier = Modifier,
+    iconTint: Color = MaterialTheme.colorScheme.onSurface,
+    onClick: () -> Unit
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Icon(
+            modifier = Modifier.fillMaxSize(fraction = .8f),
+            painter = painterResource(R.drawable.exo_icon_previous),
+            contentDescription = "Previous",
+            tint = iconTint
+        )
+    }
+}
+
+@Composable
+fun NextButton(
+    modifier: Modifier = Modifier,
+    iconTint: Color = MaterialTheme.colorScheme.onSurface,
+    onClick: () -> Unit
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Icon(
+            modifier = Modifier.fillMaxSize(fraction = .8f),
+            painter = painterResource(R.drawable.exo_icon_next),
+            contentDescription = "Previous",
+            tint = iconTint
+        )
+    }
+}

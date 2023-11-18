@@ -110,7 +110,13 @@ fun HomeScreen(
                                     openBottomSheet = false
                                 }
                             },
-                            onMenuTap = {}
+                            onMenuTap = {},
+                            onPrevClick = {
+                                viewModel.playPreviousStation()
+                            },
+                            onNextClick = {
+                                viewModel.playNextStation()
+                            }
                         )
                     }
                 }
