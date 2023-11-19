@@ -68,13 +68,23 @@ internal class MediaControllerManager private constructor(context: Context) : Re
     }
 
     internal fun release() {
-        controller.value?.release()
-        controller.value = null
+        factory?.let {
+            MediaController.releaseFuture(it)
+            updateControllerState()
+        }
         factory = null
     }
 
     private fun setupController() {
-        controller.value = factory?.get()
+        updateControllerState()
+    }
+
+    private fun updateControllerState() {
+        controller.value = factory?.let {
+             if (it.isDone) it.get() else null
+        } ?: run {
+            null
+        }
     }
 
     override fun onAbandoned() { release() }
