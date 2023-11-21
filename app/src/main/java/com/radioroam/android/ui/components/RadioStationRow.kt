@@ -2,6 +2,7 @@ package com.radioroam.android.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,15 +48,29 @@ fun RadioStationRow(
                 model = item.mediaMetadata.artworkUri?.toString(),
                 contentDescription = null,
             )
-            Text(
+            Column(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .weight(1f), // give weight to the text
-                text = item.mediaMetadata.displayTitle.toString(),
-                color = Color.Black,
-                maxLines = 1, // prevent text from wrapping
-                overflow = TextOverflow.Ellipsis // add ellipsis when text is too long
-            )
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = item.mediaMetadata.displayTitle.toString(),
+                    color = Color.Black,
+                    maxLines = 1, // prevent text from wrapping
+                    overflow = TextOverflow.Ellipsis // add ellipsis when text is too long
+                )
+                val genres = item.mediaMetadata.genre
+                if (genres?.isNotEmpty() == true) {
+                    Text(
+                        text = genres.toString(),
+                        color = Color.Black,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
         Icon(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "Add to Favorites")
     }
@@ -71,7 +86,10 @@ fun RadioStationRowPreview() {
             .background(Color.White)
             .padding(16.dp),
         item = MediaItem.Builder()
-            .setMediaMetadata(MediaMetadata.Builder().setDisplayTitle("Stationasdsadsadsaadsadssaddasdasadssaddsaadsdas").build())
+            .setMediaMetadata(MediaMetadata.Builder()
+                .setDisplayTitle("Stationasdsadsadsaadsadssaddasdasadssaddsaadsdas")
+                .setGenre("Rock")
+                .build())
             .build()
     )
 }

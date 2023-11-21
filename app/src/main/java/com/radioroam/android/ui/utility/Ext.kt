@@ -9,3 +9,11 @@ fun Context.findActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.findActivity()
     else -> null
 }
+
+fun String.removeNonAlphanumericFirstChar(): String {
+    var output = this
+    while (output.isNotEmpty() && !output.first().isLetterOrDigit()) {
+        output = output.substring(1)
+    }
+    return output
+}

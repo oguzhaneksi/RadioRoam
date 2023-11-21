@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.C
 import com.radioroam.android.domain.state.RadioStationsUiState
 import com.radioroam.android.ui.components.HomeTopAppBar
 import com.radioroam.android.ui.components.RadioStationList
@@ -70,18 +71,14 @@ fun HomeScreen(
                     mutableStateOf(mediaController?.state())
                 }
 
-                val currentPlayingStream by viewModel.currentPlayingMedia.collectAsStateWithLifecycle()
-
-                DisposableEffect(currentPlayingStream, mediaController) {
-                    if (mediaController != null && currentPlayingStream != null) {
-                        mediaController?.run {
-                            setMediaItem(currentPlayingStream!!)
-                            prepare()
-                            play()
-                            playerState = mediaController?.state()
-                        }
-
+                DisposableEffect(key1 = mediaController) {
+                    mediaController?.run {
+                        setMediaItems(items, playerState?.mediaItemIndex ?: 0, C.TIME_UNSET)
+                        prepare()
+                        play()
+                        playerState = state()
                     }
+
                     onDispose {
                         playerState?.dispose()
                     }
@@ -112,10 +109,10 @@ fun HomeScreen(
                             },
                             onMenuTap = {},
                             onPrevClick = {
-                                viewModel.playPreviousStation()
+                                mediaController?.seekToPreviousMediaItem()
                             },
                             onNextClick = {
-                                viewModel.playNextStation()
+                                mediaController?.seekToNextMediaItem()
                             }
                         )
                     }
@@ -127,8 +124,8 @@ fun HomeScreen(
                     RadioStationList(
                         modifier = Modifier.padding(paddingValues),
                         items = items,
-                        onItemClick = { item ->
-                            viewModel.onMediaChanged(item)
+                        onItemClick = { index ->
+                            mediaController?.seekTo(index, C.TIME_UNSET)
                         }
                     )
 

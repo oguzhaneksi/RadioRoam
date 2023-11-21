@@ -18,52 +18,9 @@ class HomeViewModel(
     private val _state = MutableStateFlow<RadioStationsUiState>(RadioStationsUiState.Loading)
     val state = _state.asStateFlow()
 
-    private val _currentPlayingMedia = MutableStateFlow<MediaItem?>(null)
-    val currentPlayingMedia = _currentPlayingMedia.asStateFlow()
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _state.emit(getRadioStationsUseCase.execute())
-        }
-    }
-
-    fun onMediaChanged(newMedia: MediaItem) {
-        _currentPlayingMedia.update {
-            newMedia
-        }
-    }
-
-    fun playPreviousStation() {
-        _currentPlayingMedia.update { currentPlayingMedia ->
-            if (state.value !is RadioStationsUiState.Success)
-                currentPlayingMedia
-            else {
-                val mediaList = (state.value as RadioStationsUiState.Success).data
-                val currentPlayingIndex = mediaList.indexOfFirst {
-                    currentPlayingMedia?.mediaId == it.mediaId
-                }
-                if (currentPlayingIndex > 0)
-                    mediaList.getOrNull(currentPlayingIndex - 1)
-                else
-                    currentPlayingMedia
-            }
-        }
-    }
-
-    fun playNextStation() {
-        _currentPlayingMedia.update { currentPlayingMedia ->
-            if (state.value !is RadioStationsUiState.Success)
-                currentPlayingMedia
-            else {
-                val mediaList = (state.value as RadioStationsUiState.Success).data
-                val currentPlayingIndex = mediaList.indexOfFirst {
-                    currentPlayingMedia?.mediaId == it.mediaId
-                }
-                if (currentPlayingIndex >= 0 && currentPlayingIndex < mediaList.size)
-                    mediaList.getOrNull(currentPlayingIndex + 1)
-                else
-                    currentPlayingMedia
-            }
         }
     }
 

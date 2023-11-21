@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,17 +19,17 @@ import androidx.media3.common.MediaItem
 fun RadioStationList(
     modifier: Modifier = Modifier,
     items: List<MediaItem> = emptyList(),
-    onItemClick: (MediaItem) -> Unit = {}
+    onItemClick: (Int) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
     ) {
-        items(
+        itemsIndexed(
             items = items,
-            key = {
-                it.mediaId
+            key = { _, item ->
+                item.mediaId
             }
-        ) {
+        ) { index, item ->
             RadioStationRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -36,9 +37,9 @@ fun RadioStationList(
                     .background(Color.White)
                     .padding(16.dp)
                     .clickable {
-                        onItemClick(it)
+                        onItemClick(index)
                     },
-                item = it
+                item = item
             )
         }
     }
