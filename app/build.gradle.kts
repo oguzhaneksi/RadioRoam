@@ -69,6 +69,7 @@ dependencies {
     val koinVersion = "3.5.0"
     val media3Version = "1.1.1"
     val coroutinesVersion = "1.7.3"
+    val pagingVersion = "3.2.1"
 
     // Desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
@@ -88,6 +89,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+
+    // Paging
+    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+    implementation("androidx.paging:paging-compose:$pagingVersion")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")

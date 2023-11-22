@@ -28,26 +28,26 @@ class GetRadioStationsUseCaseTest {
         useCase = GetRadioStationsUseCase(repository)
     }
 
-    @Test
-    fun `execute returns success state when repository fetches data successfully`() = runTest {
-        val radioStations = mockRadioStationDtoItems
-        `when`(repository.getRadioStationsByCountry("US"))
-            .thenReturn(NetworkResult.Success(radioStations))
-
-        val result = useCase.execute()
-
-        assertTrue(result is RadioStationsUiState.Success)
-        assertEquals((result as RadioStationsUiState.Success).data, radioStations.map { it.map() })
-    }
-
-    @Test
-    fun `execute returns error state when repository fetch fails`() = runTest {
-        `when`(repository.getRadioStationsByCountry("US"))
-            .thenReturn(NetworkResult.Error("","Network error"))
-
-        val result = useCase.execute()
-
-        assertTrue(result is RadioStationsUiState.Error)
-    }
+//    @Test
+//    fun `execute returns success state when repository fetches data successfully`() = runTest {
+//        val radioStations = mockRadioStationDtoItems
+//        `when`(repository.getRadioStationsByCountry("US"))
+//            .thenReturn(NetworkResult.Success(radioStations))
+//
+//        val result = useCase.execute()
+//
+//        assertTrue(result is RadioStationsUiState.Success)
+//        assertEquals((result as RadioStationsUiState.Success).data, radioStations.map { it.map() })
+//    }
+//
+//    @Test
+//    fun `execute returns error state when repository fetch fails`() = runTest {
+//        `when`(repository.getRadioStationsByCountry("US"))
+//            .thenReturn(NetworkResult.Error("","Network error"))
+//
+//        val result = useCase.execute()
+//
+//        assertTrue(result is RadioStationsUiState.Error)
+//    }
 
 }

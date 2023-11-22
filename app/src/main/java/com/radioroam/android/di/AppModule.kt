@@ -1,9 +1,11 @@
 package com.radioroam.android.di
 
 import com.radioroam.android.BuildConfig
+import com.radioroam.android.data.datasource.RadioStationsRemoteDataSource
 import com.radioroam.android.data.network.ApiService
 import com.radioroam.android.data.network.ApiServiceImpl
 import com.radioroam.android.data.repository.RadioStationRepository
+import com.radioroam.android.data.repository.paging.RadioStationsPagingSource
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
 import com.radioroam.android.ui.viewmodel.HomeViewModel
 import io.ktor.client.HttpClient
@@ -50,6 +52,7 @@ val appModule = module {
         }
     }
     single<ApiService> { ApiServiceImpl(get()) }
+    factory { RadioStationsRemoteDataSource(get()) }
     factory { RadioStationRepository(get()) }
     factory { GetRadioStationsUseCase(get()) }
     viewModel { HomeViewModel(get()) }
