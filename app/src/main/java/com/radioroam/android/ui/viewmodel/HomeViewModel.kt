@@ -18,9 +18,18 @@ class HomeViewModel(
     private val _state = MutableStateFlow<RadioStationsUiState>(RadioStationsUiState.Loading)
     val state = _state.asStateFlow()
 
+    private val _isPlayingEnabled = MutableStateFlow(false)
+    val isPlayingEnabled = _isPlayingEnabled.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _state.emit(getRadioStationsUseCase.execute())
+        }
+    }
+
+    fun enablePlaying() {
+        _isPlayingEnabled.update {
+            true
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.media3.common.C
 import com.radioroam.android.domain.state.RadioStationsUiState
 import com.radioroam.android.ui.components.HomeTopAppBar
 import com.radioroam.android.ui.components.RadioStationList
+import com.radioroam.android.ui.components.mediabrowser.rememberManagedMediaBrowser
 import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
@@ -65,6 +67,20 @@ fun HomeScreen(
             is RadioStationsUiState.Success -> {
                 val items = (state as RadioStationsUiState.Success).data
 
+                val isPlayingEnabled by viewModel.isPlayingEnabled.collectAsStateWithLifecycle()
+
+                val browser by rememberManagedMediaBrowser()
+
+                LaunchedEffect(key1 = isPlayingEnabled) {
+                    if (isPlayingEnabled) {
+                        browser?.run {
+                            setMediaItems(items, browser?.currentMediaItemIndex ?: 0, C.TIME_UNSET)
+                            prepare()
+                            play()
+                        }
+                    }
+                }
+
                 val mediaController by rememberManagedMediaController()
 
                 var playerState: PlayerState? by remember {
@@ -73,12 +89,8 @@ fun HomeScreen(
 
                 DisposableEffect(key1 = mediaController) {
                     mediaController?.run {
-                        setMediaItems(items, playerState?.mediaItemIndex ?: 0, C.TIME_UNSET)
-                        prepare()
-                        play()
                         playerState = state()
                     }
-
                     onDispose {
                         playerState?.dispose()
                     }
@@ -125,11 +137,12 @@ fun HomeScreen(
                         modifier = Modifier.padding(paddingValues),
                         items = items,
                         onItemClick = { index ->
-                            mediaController?.seekTo(index, C.TIME_UNSET)
+                            viewModel.enablePlaying()
+                            mediaController?.seekToDefaultPosition(index)
                         }
                     )
 
-                    if (playerState != null) {
+                    if (isPlayingEnabled && playerState != null) {
                         CompactPlayerView(
                             modifier = Modifier
                                 .fillMaxWidth()
