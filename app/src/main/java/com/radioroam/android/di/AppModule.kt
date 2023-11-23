@@ -1,11 +1,12 @@
 package com.radioroam.android.di
 
+import android.content.Context
+import android.telephony.TelephonyManager
 import com.radioroam.android.BuildConfig
 import com.radioroam.android.data.datasource.RadioStationsRemoteDataSource
 import com.radioroam.android.data.network.ApiService
 import com.radioroam.android.data.network.ApiServiceImpl
 import com.radioroam.android.data.repository.RadioStationRepository
-import com.radioroam.android.data.repository.paging.RadioStationsPagingSource
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
 import com.radioroam.android.ui.viewmodel.HomeViewModel
 import io.ktor.client.HttpClient
@@ -17,6 +18,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -51,9 +53,10 @@ val appModule = module {
             }
         }
     }
+    factory { androidContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager }
     single<ApiService> { ApiServiceImpl(get()) }
     factory { RadioStationsRemoteDataSource(get()) }
     factory { RadioStationRepository(get()) }
-    factory { GetRadioStationsUseCase(get()) }
+    factory { GetRadioStationsUseCase(get(), get()) }
     viewModel { HomeViewModel(get()) }
 }

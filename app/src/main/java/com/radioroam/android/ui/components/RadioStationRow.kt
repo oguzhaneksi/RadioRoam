@@ -17,12 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import com.radioroam.android.R
 
 @Composable
 fun RadioStationRow(
@@ -47,6 +50,8 @@ fun RadioStationRow(
                     .padding(8.dp),
                 model = item.mediaMetadata.artworkUri?.toString(),
                 contentDescription = null,
+                placeholder = painterResource(id = R.drawable.radio),
+                error = painterResource(id = R.drawable.error)
             )
             Column(
                 modifier = Modifier

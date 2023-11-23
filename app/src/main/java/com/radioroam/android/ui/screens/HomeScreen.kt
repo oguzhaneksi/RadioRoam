@@ -131,7 +131,9 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             RadioStationList(
-                modifier = Modifier.padding(paddingValues),
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(bottom = if (isPlayerSetUp) 60.dp else 0.dp),
                 items = radioStations,
                 onItemClick = { index ->
                     viewModel.enablePlaying()
