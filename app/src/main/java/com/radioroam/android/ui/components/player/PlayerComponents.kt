@@ -2,11 +2,14 @@ package com.radioroam.android.ui.components.player
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,37 +19,69 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import androidx.media3.ui.R
 import coil.compose.AsyncImage
+import com.radioroam.android.ui.state.PlayerState
 
 @Composable
 fun PlayPauseButton(
     modifier: Modifier = Modifier,
     isPlaying: Boolean,
+    isBuffering: Boolean,
     iconTint: Color = MaterialTheme.colorScheme.onSurface,
     onTogglePlayPause: () -> Unit
 ) {
-    IconButton(
-        modifier = modifier,
-        onClick = {
-            onTogglePlayPause()
+    if (isBuffering) {
+        PlayerProgressIndicator(
+            modifier = modifier,
+            progressTint = iconTint
+        )
+    }
+    else {
+        IconButton(
+            modifier = modifier,
+            onClick = {
+                onTogglePlayPause()
+            }
+        ) {
+            Icon(
+                modifier = Modifier.fillMaxSize(fraction = .8f),
+                painter = painterResource(
+                    id = if (isPlaying)
+                        R.drawable.exo_icon_pause
+                    else
+                        R.drawable.exo_icon_play
+                ),
+                contentDescription = if (isPlaying) "Pause" else "Play",
+                tint = iconTint
+            )
         }
+    }
+}
+
+@Composable
+fun PlayerProgressIndicator(
+    modifier: Modifier = Modifier,
+    progressTint: Color = MaterialTheme.colorScheme.onSurface
+) {
+    Box(
+        modifier = modifier
     ) {
-        Icon(
-            modifier = Modifier.fillMaxSize(fraction = .8f),
-            painter = painterResource(
-                id = if (isPlaying)
-                    R.drawable.exo_icon_pause
-                else
-                    R.drawable.exo_icon_play
-            ),
-            contentDescription = if (isPlaying) "Pause" else "Play",
-            tint = iconTint
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxSize(.8f)
+                .align(Center),
+            color = progressTint,
+            trackColor = Color.Transparent
         )
     }
 }

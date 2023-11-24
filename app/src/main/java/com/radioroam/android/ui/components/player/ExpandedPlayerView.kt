@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.radioroam.android.R
 import com.radioroam.android.ui.state.PlayerState
+import com.radioroam.android.ui.utility.isBuffering
 
 @Composable
 fun ExpandedPlayerView(
@@ -142,6 +143,7 @@ private fun PlayerControls(
                 .background(color = MaterialTheme.colorScheme.onSurface, shape = CircleShape)
                 .padding(8.dp),
             isPlaying = playerState.isPlaying,
+            isBuffering = playerState.isBuffering,
             iconTint = MaterialTheme.colorScheme.surface
         ) {
             with(playerState.player) {

@@ -31,6 +31,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import coil.compose.AsyncImage
 import com.radioroam.android.ui.state.PlayerState
+import com.radioroam.android.ui.utility.isBuffering
 
 @Composable
 fun CompactPlayerView(
@@ -73,7 +74,8 @@ fun CompactPlayerView(
             PlayPauseButton(
                 modifier = Modifier
                     .size(40.dp),
-                isPlaying = playerState.isPlaying
+                isPlaying = playerState.isPlaying,
+                isBuffering = playerState.isBuffering
             ) {
                 with(playerState.player) {
                     playWhenReady = !playWhenReady

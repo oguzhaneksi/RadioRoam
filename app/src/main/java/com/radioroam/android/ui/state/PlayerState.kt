@@ -206,7 +206,7 @@ internal class PlayerStateImpl(
         }
 
         override fun onIsLoadingChanged(isLoading: Boolean) {
-            this@PlayerStateImpl.isLoading
+            this@PlayerStateImpl.isLoading = isLoading
         }
 
         override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
