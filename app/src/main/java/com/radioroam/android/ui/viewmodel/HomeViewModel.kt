@@ -34,7 +34,7 @@ class HomeViewModel(
         }
     }
 
-    fun enablePlaying() {
+    fun setupPlayer() {
         _isPlayerSetUp.update {
             true
         }

@@ -14,4 +14,13 @@ fun Player.updatePlaylist(incoming: List<MediaItem>) {
     addMediaItems(itemsToAdd)
 }
 
+fun Player.playMediaAt(index: Int) {
+    if (currentMediaItemIndex == index)
+        return
+    seekToDefaultPosition(index)
+    playWhenReady = true
+    // Recover from any errors that may have happened at previous media positions
+    prepare()
+}
+
 val PlayerState.isBuffering get() = playbackState == Player.STATE_BUFFERING

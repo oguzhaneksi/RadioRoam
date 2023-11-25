@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -18,14 +21,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.C
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.radioroam.android.ui.components.HomeTopAppBar
@@ -36,6 +37,7 @@ import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
 import com.radioroam.android.ui.state.PlayerState
 import com.radioroam.android.ui.state.state
+import com.radioroam.android.ui.utility.playMediaAt
 import com.radioroam.android.ui.utility.updatePlaylist
 import com.radioroam.android.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
@@ -48,10 +50,13 @@ fun HomeScreen(
 ) {
     val radioStations = viewModel.state.collectAsLazyPagingItems()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         topBar = {
             HomeTopAppBar()
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         val isPlayerSetUp by viewModel.isPlayerSetUp.collectAsStateWithLifecycle()
 
@@ -90,6 +95,19 @@ fun HomeScreen(
             }
             onDispose {
                 playerState?.dispose()
+            }
+        }
+
+        LaunchedEffect(key1 = playerState?.playerError) {
+            playerState?.playerError?.let { exception ->
+                val result = snackbarHostState.showSnackbar(
+                    message = "${exception.message}, Code: ${exception.errorCode}",
+                    withDismissAction = true,
+                    actionLabel = "Retry"
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    mediaController?.prepare()
+                }
             }
         }
 
@@ -136,8 +154,8 @@ fun HomeScreen(
                     .padding(bottom = if (isPlayerSetUp) 60.dp else 0.dp),
                 items = radioStations,
                 onItemClick = { index ->
-                    viewModel.enablePlaying()
-                    mediaController?.seekToDefaultPosition(index)
+                    viewModel.setupPlayer()
+                    mediaController?.playMediaAt(index)
                 }
             )
 
