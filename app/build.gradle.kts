@@ -5,6 +5,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlinx-serialization")
+    id("kotlin-kapt")
 }
 
 android {
@@ -70,6 +71,8 @@ dependencies {
     val media3Version = "1.1.1"
     val coroutinesVersion = "1.7.3"
     val pagingVersion = "3.2.1"
+    val roomVersion = "2.6.0"
+    val navVersion = "2.7.5"
 
     // Desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
@@ -94,6 +97,9 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
     implementation("androidx.paging:paging-compose:$pagingVersion")
 
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
@@ -108,6 +114,11 @@ dependencies {
 
     // HTTP Logging
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // Room
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     // Koin
     implementation("io.insert-koin:koin-core:$koinVersion")

@@ -2,12 +2,17 @@ package com.radioroam.android.di
 
 import android.content.Context
 import android.telephony.TelephonyManager
+import androidx.room.Room
 import com.radioroam.android.BuildConfig
+import com.radioroam.android.data.database.AppDatabase
 import com.radioroam.android.data.datasource.RadioStationsRemoteDataSource
 import com.radioroam.android.data.network.ApiService
 import com.radioroam.android.data.network.ApiServiceImpl
 import com.radioroam.android.data.repository.RadioStationRepository
+import com.radioroam.android.domain.usecase.AddToOrRemoveFromFavoritesUseCase
+import com.radioroam.android.domain.usecase.GetFavoriteRadioStationsUseCase
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
+import com.radioroam.android.ui.viewmodel.FavoritesViewModel
 import com.radioroam.android.ui.viewmodel.HomeViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -53,10 +58,22 @@ val appModule = module {
             }
         }
     }
+
+    single {
+        Room.databaseBuilder(
+            context = androidContext().applicationContext,
+            klass = AppDatabase::class.java,
+            name = "radio_stations.db"
+        ).build()
+    }
+
     factory { androidContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager }
     single<ApiService> { ApiServiceImpl(get()) }
     factory { RadioStationsRemoteDataSource(get()) }
-    factory { RadioStationRepository(get()) }
+    factory { RadioStationRepository(get(), get()) }
     factory { GetRadioStationsUseCase(get(), get()) }
-    viewModel { HomeViewModel(get()) }
+    factory { GetFavoriteRadioStationsUseCase(get()) }
+    factory { AddToOrRemoveFromFavoritesUseCase(get()) }
+    viewModel { HomeViewModel(get(), get()) }
+    viewModel { FavoritesViewModel(get(), get()) }
 }

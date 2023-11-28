@@ -20,7 +20,8 @@ import com.radioroam.android.ui.components.loading.PageLoader
 fun RadioStationList(
     modifier: Modifier = Modifier,
     items: LazyPagingItems<MediaItem>,
-    onItemClick: (Int) -> Unit = {}
+    onItemClick: (Int) -> Unit = {},
+    onFavClick: (MediaItem) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -38,7 +39,8 @@ fun RadioStationList(
                         .clickable {
                             onItemClick(index)
                         },
-                    item = item
+                    item = item,
+                    onFavClick = onFavClick
                 )
             }
         }

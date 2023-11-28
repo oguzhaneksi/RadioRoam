@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
 import com.radioroam.android.R
 
 @Composable
 fun RadioStationRow(
     modifier: Modifier = Modifier,
-    item: MediaItem
+    item: MediaItem,
+    onFavClick: (MediaItem) -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -77,7 +77,12 @@ fun RadioStationRow(
                 }
             }
         }
-        Icon(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "Add to Favorites")
+        IconButton(onClick = { onFavClick(item)}) {
+            Icon(
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = "Add to Favorites"
+            )
+        }
     }
 }
 
@@ -95,6 +100,7 @@ fun RadioStationRowPreview() {
                 .setDisplayTitle("Stationasdsadsadsaadsadssaddasdasadssaddsaadsdas")
                 .setGenre("Rock")
                 .build())
-            .build()
+            .build(),
+        onFavClick = {}
     )
 }

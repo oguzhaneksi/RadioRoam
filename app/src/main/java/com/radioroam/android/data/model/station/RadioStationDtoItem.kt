@@ -1,75 +1,114 @@
 package com.radioroam.android.data.model.station
 
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Entity
 data class RadioStationDtoItem(
     @SerialName("bitrate")
-    val bitrate: Int? = null,
+    @Ignore
+    var bitrate: Int? = null,
     @SerialName("changeuuid")
-    val changeuuid: String? = null,
+    @Ignore
+    var changeuuid: String? = null,
     @SerialName("clickcount")
-    val clickcount: Int? = null,
+    @Ignore
+    var clickcount: Int? = null,
     @SerialName("clicktimestamp")
-    val clicktimestamp: String? = null,
+    @Ignore
+    var clicktimestamp: String? = null,
     @SerialName("clicktimestamp_iso8601")
-    val clicktimestampIso8601: String? = null,
+    @Ignore
+    var clicktimestampIso8601: String? = null,
     @SerialName("clicktrend")
-    val clicktrend: Int? = null,
+    @Ignore
+    var clicktrend: Int? = null,
     @SerialName("codec")
-    val codec: String? = null,
+    @Ignore
+    var codec: String? = null,
     @SerialName("country")
-    val country: String? = null,
+    @Ignore
+    var country: String? = null,
     @SerialName("countrycode")
-    val countrycode: String? = null,
+    @Ignore
+    var countrycode: String? = null,
     @SerialName("favicon")
-    val favicon: String? = null,
+    @ColumnInfo("favicon")
+    var favicon: String? = null,
     @SerialName("has_extended_info")
-    val hasExtendedInfo: Boolean? = null,
+    @Ignore
+    var hasExtendedInfo: Boolean? = null,
     @SerialName("hls")
-    val hls: Int? = null,
+    @Ignore
+    var hls: Int? = null,
     @SerialName("homepage")
-    val homepage: String? = null,
+    @Ignore
+    var homepage: String? = null,
     @SerialName("language")
-    val language: String? = null,
+    @Ignore
+    var language: String? = null,
     @SerialName("languagecodes")
-    val languagecodes: String? = null,
+    @Ignore
+    var languagecodes: String? = null,
     @SerialName("lastchangetime")
-    val lastchangetime: String? = null,
+    @Ignore
+    var lastchangetime: String? = null,
     @SerialName("lastchangetime_iso8601")
-    val lastchangetimeIso8601: String? = null,
+    @Ignore
+    var lastchangetimeIso8601: String? = null,
     @SerialName("lastcheckok")
-    val lastcheckok: Int? = null,
+    @Ignore
+    var lastcheckok: Int? = null,
     @SerialName("lastcheckoktime")
-    val lastcheckoktime: String? = null,
+    @Ignore
+    var lastcheckoktime: String? = null,
     @SerialName("lastcheckoktime_iso8601")
-    val lastcheckoktimeIso8601: String? = null,
+    @Ignore
+    var lastcheckoktimeIso8601: String? = null,
     @SerialName("lastchecktime")
-    val lastchecktime: String? = null,
+    @Ignore
+    var lastchecktime: String? = null,
     @SerialName("lastchecktime_iso8601")
-    val lastchecktimeIso8601: String? = null,
+    @Ignore
+    var lastchecktimeIso8601: String? = null,
     @SerialName("lastlocalchecktime")
-    val lastlocalchecktime: String? = null,
+    @Ignore
+    var lastlocalchecktime: String? = null,
     @SerialName("lastlocalchecktime_iso8601")
-    val lastlocalchecktimeIso8601: String? = null,
+    @Ignore
+    var lastlocalchecktimeIso8601: String? = null,
     @SerialName("name")
-    val name: String? = null,
+    @ColumnInfo("name")
+    var name: String? = null,
     @SerialName("serveruuid")
-    val serveruuid: String? = null,
+    @Ignore
+    var serveruuid: String? = null,
     @SerialName("ssl_error")
-    val sslError: Int? = null,
+    @Ignore
+    var sslError: Int? = null,
     @SerialName("state")
-    val state: String? = null,
+    @Ignore
+    var state: String? = null,
     @SerialName("stationuuid")
-    val stationuuid: String? = null,
+    @ColumnInfo("stationuuid")
+    @PrimaryKey(autoGenerate = false)
+    var stationuuid: String = "",
     @SerialName("tags")
-    val tags: String? = null,
+    @ColumnInfo("tags")
+    var tags: String? = null,
     @SerialName("url")
-    val url: String? = null,
+    @Ignore
+    var url: String? = null,
     @SerialName("url_resolved")
-    val urlResolved: String? = null,
+    @ColumnInfo("url_resolved")
+    var urlResolved: String? = null,
     @SerialName("votes")
-    val votes: Int? = null
+    @Ignore
+    var votes: Int? = null
 )

@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.radioroam.android.ui.components.HomeTopAppBar
@@ -35,6 +37,7 @@ import com.radioroam.android.ui.components.mediabrowser.rememberManagedMediaBrow
 import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
+import com.radioroam.android.ui.navigation.Screen
 import com.radioroam.android.ui.state.PlayerState
 import com.radioroam.android.ui.state.state
 import com.radioroam.android.ui.utility.playMediaAt
@@ -46,7 +49,8 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    navController: NavController = rememberNavController()
 ) {
     val radioStations = viewModel.state.collectAsLazyPagingItems()
 
@@ -54,7 +58,9 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            HomeTopAppBar()
+            HomeTopAppBar {
+                navController.navigate(Screen.Favorites.title)
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
@@ -156,6 +162,9 @@ fun HomeScreen(
                 onItemClick = { index ->
                     viewModel.setupPlayer()
                     mediaController?.playMediaAt(index)
+                },
+                onFavClick = {
+                    viewModel.addOrRemoteFavorites(it)
                 }
             )
 

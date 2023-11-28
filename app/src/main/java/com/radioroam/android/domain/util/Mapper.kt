@@ -49,3 +49,13 @@ fun RadioStationDtoItem.map(): MediaItem {
         .setMediaMetadata(metadata)
         .build()
 }
+
+fun MediaItem.mapToDto(): RadioStationDtoItem {
+    return RadioStationDtoItem(
+        urlResolved = localConfiguration?.uri.toString(),
+        stationuuid = mediaId,
+        favicon = mediaMetadata.artworkUri.toString(),
+        name = mediaMetadata.displayTitle.toString(),
+        tags = mediaMetadata.genre.toString().split("|").joinToString(",")
+    )
+}

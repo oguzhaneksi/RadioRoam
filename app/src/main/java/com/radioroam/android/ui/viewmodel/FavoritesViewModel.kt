@@ -6,46 +6,38 @@ import androidx.media3.common.MediaItem
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.radioroam.android.domain.usecase.AddToOrRemoveFromFavoritesUseCase
-import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
+import com.radioroam.android.domain.usecase.GetFavoriteRadioStationsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
-    private val getRadioStationsUseCase: GetRadioStationsUseCase,
+class FavoritesViewModel(
+    private val getFavoriteRadioStationsUseCase: GetFavoriteRadioStationsUseCase,
     private val addToOrRemoveFromFavoritesUseCase: AddToOrRemoveFromFavoritesUseCase
 ): ViewModel() {
-
-    private val _state = MutableStateFlow<PagingData<MediaItem>>(PagingData.empty())
-    val state = _state.asStateFlow()
-
-    private val _isPlayerSetUp = MutableStateFlow(false)
-    val isPlayerSetUp = _isPlayerSetUp.asStateFlow()
+    private val _favorites = MutableStateFlow<PagingData<MediaItem>>(PagingData.empty())
+    val favorites = _favorites.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            getRadioStationsUseCase.execute()
+            getFavoriteRadioStationsUseCase.execute()
                 .distinctUntilChanged()
                 .cachedIn(viewModelScope)
                 .collect {
-                    _state.emit(it)
+                    _favorites.emit(it)
                 }
         }
     }
 
-    fun setupPlayer() {
-        _isPlayerSetUp.update {
-            true
-        }
-    }
-
-    fun addOrRemoteFavorites(item: MediaItem) {
+    fun removeItem(item: MediaItem) {
         viewModelScope.launch(Dispatchers.IO) {
             addToOrRemoveFromFavoritesUseCase.execute(item)
         }
     }
+
 
 }
