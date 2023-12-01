@@ -10,7 +10,7 @@ class AddToOrRemoveFromFavoritesUseCase(
 ) {
 
     suspend fun execute(item: MediaItem) {
-        val isAdded = repository.getFavoriteRadioStationByStationUUID(item.mediaId).firstOrNull() != null
+        val isAdded = repository.getFavoriteRadioStationByStationUUID(item.mediaId) != null
         val radioStationDtoItem = item.mapToDto()
         if (isAdded)
             repository.removeFromFavorites(radioStationDtoItem)

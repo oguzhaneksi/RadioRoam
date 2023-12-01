@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +26,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import coil.compose.AsyncImage
 import com.radioroam.android.R
+import com.radioroam.android.domain.util.FAVORITE_ARG
 
 @Composable
 fun RadioStationRow(
@@ -77,10 +79,11 @@ fun RadioStationRow(
                 }
             }
         }
+        val isFavorite = item.mediaMetadata.extras?.getBoolean(FAVORITE_ARG) == true
         IconButton(onClick = { onFavClick(item)}) {
             Icon(
-                imageVector = Icons.Outlined.FavoriteBorder,
-                contentDescription = "Add to Favorites"
+                imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites"
             )
         }
     }

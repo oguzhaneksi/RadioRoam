@@ -42,7 +42,7 @@ class RadioStationRepository(
         }
     ).flow
 
-    fun getFavoriteRadioStationByStationUUID(stationuuid: String) =
+    suspend fun getFavoriteRadioStationByStationUUID(stationuuid: String) =
         localDatabase.radioStationsDao.getFavoriteRadioStationByStationUUID(stationuuid)
 
     suspend fun addToFavorites(station: RadioStationDtoItem) {

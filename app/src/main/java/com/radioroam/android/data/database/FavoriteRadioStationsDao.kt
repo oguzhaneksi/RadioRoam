@@ -13,8 +13,8 @@ interface FavoriteRadioStationsDao {
     @Query("SELECT * FROM RadioStationDtoItem ORDER BY name LIMIT :limit OFFSET :offset")
     fun getAllFavoriteRadioStations(limit: Int, offset: Int): Flow<List<RadioStationDtoItem>>
 
-    @Query("SELECT * FROM RadioStationDtoItem WHERE stationuuid = :stationuuid")
-    fun getFavoriteRadioStationByStationUUID(stationuuid: String): Flow<RadioStationDtoItem>
+    @Query("SELECT stationuuid FROM RadioStationDtoItem WHERE stationuuid = :stationuuid")
+    suspend fun getFavoriteRadioStationByStationUUID(stationuuid: String): RadioStationDtoItem?
 
     @Insert
     suspend fun insertRadioStations(vararg radioStations: RadioStationDtoItem)

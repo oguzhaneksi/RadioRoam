@@ -13,7 +13,9 @@ class GetFavoriteRadioStationsUseCase(
 ) {
 
     fun execute(): Flow<PagingData<MediaItem>> = repository.getFavoriteRadioStations().map { list ->
-        list.map { it.map() }
+        list.map {
+            it.map(true)
+        }
     }
 
 }

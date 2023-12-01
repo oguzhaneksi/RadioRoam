@@ -17,7 +17,11 @@ class GetRadioStationsUseCase(
     fun execute(
         countryCode: String = telephonyManager.networkCountryIso
     ): Flow<PagingData<MediaItem>> {
-        return repository.getRadioStationsByCountry(countryCode).map { pagingSource -> pagingSource.map { it.map() } }
+        return repository.getRadioStationsByCountry(countryCode).map { pagingSource ->
+            pagingSource.map {
+                it.map(repository.getFavoriteRadioStationByStationUUID(it.stationuuid) != null)
+            }
+        }
     }
 
 }
