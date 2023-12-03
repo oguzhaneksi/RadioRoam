@@ -32,7 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.radioroam.android.ui.components.HomeTopAppBar
-import com.radioroam.android.ui.components.RadioStationList
+import com.radioroam.android.ui.components.RadioStationPaginatedList
 import com.radioroam.android.ui.components.mediabrowser.rememberManagedMediaBrowser
 import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
@@ -154,7 +154,7 @@ fun HomeScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            RadioStationList(
+            RadioStationPaginatedList(
                 modifier = Modifier
                     .padding(paddingValues)
                     .padding(bottom = if (isPlayerSetUp) 60.dp else 0.dp),

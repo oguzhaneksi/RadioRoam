@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.radioroam.android.ui.components.FavoriteTopAppBar
 import com.radioroam.android.ui.components.RadioStationList
+import com.radioroam.android.ui.components.RadioStationPaginatedList
 import com.radioroam.android.ui.viewmodel.FavoritesViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -19,7 +21,7 @@ fun FavoritesScreen(
     viewModel: FavoritesViewModel = koinViewModel(),
     navController: NavController = rememberNavController()
 ) {
-    val favoriteStations = viewModel.favorites.collectAsLazyPagingItems()
+    val favoriteStations by viewModel.favorites.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {

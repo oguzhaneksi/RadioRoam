@@ -16,7 +16,7 @@ class ApiServiceImpl(
         offset: Int,
         hideBroken: Boolean
     ): HttpResponse = ktor.get(
-        urlString = "${BuildConfig.API_HOST}${ApiEndpoints.STATIONS_BY_COUNTRY_CODE_EXACT.replace(ApiEndpoints.COUNTRY_CODE, isoCountryCode)}"
+        urlString = "${ApiEndpoints.API_HOST}${ApiEndpoints.STATIONS_BY_COUNTRY_CODE_EXACT.replace(ApiEndpoints.COUNTRY_CODE, isoCountryCode)}"
     ) {
         parameter("limit", limit)
         parameter("offset", offset)

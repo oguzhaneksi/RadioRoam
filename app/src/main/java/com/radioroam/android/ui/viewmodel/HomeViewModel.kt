@@ -1,12 +1,15 @@
 package com.radioroam.android.ui.viewmodel
 
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.radioroam.android.domain.usecase.AddToOrRemoveFromFavoritesUseCase
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
+import com.radioroam.android.domain.util.FAVORITE_ARG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,7 +48,23 @@ class HomeViewModel(
     fun addOrRemoteFavorites(item: MediaItem) {
         viewModelScope.launch(Dispatchers.IO) {
             addToOrRemoveFromFavoritesUseCase.execute(item)
+            // update the favorite state of each item in the paging data and trigger a recomposition
+            _state.update {
+                it.map { mediaItem ->
+                    if (mediaItem.mediaId == item.mediaId) {
+                        mediaItem.toggleFavoriteState()
+                    } else {
+                        mediaItem
+                    }
+                }
+            }
         }
     }
+
+    private fun MediaItem.toggleFavoriteState() = buildUpon().setMediaMetadata(
+        mediaMetadata.buildUpon().setExtras(
+            bundleOf(FAVORITE_ARG to !mediaMetadata.extras?.getBoolean(FAVORITE_ARG)!!)
+        ).build()
+    ).build()
 
 }

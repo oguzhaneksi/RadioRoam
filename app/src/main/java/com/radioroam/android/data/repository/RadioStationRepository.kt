@@ -26,7 +26,7 @@ class RadioStationRepository(
         pageSize: Int = ApiConstants.PAGE_SIZE
     ): Flow<PagingData<RadioStationDtoItem>> {
         return Pager(
-            config = PagingConfig(pageSize = pageSize, prefetchDistance = 2),
+            config = PagingConfig(pageSize = pageSize, prefetchDistance = 2, enablePlaceholders = false),
             pagingSourceFactory = {
                 RadioStationsPagingSource(dataSource, isoCountryCode, pageSize)
             }
@@ -35,12 +35,10 @@ class RadioStationRepository(
 
     fun getFavoriteRadioStations(
         pageSize: Int = ApiConstants.PAGE_SIZE
-    ) = Pager(
-        config = PagingConfig(pageSize = pageSize, prefetchDistance = 2),
-        pagingSourceFactory = {
-            FavoriteRadioStationsPagingSource(localDatabase, pageSize)
-        }
-    ).flow
+    ) = localDatabase.radioStationsDao.getAllFavoriteRadioStations(
+        limit = pageSize,
+        offset = 0
+    )
 
     suspend fun getFavoriteRadioStationByStationUUID(stationuuid: String) =
         localDatabase.radioStationsDao.getFavoriteRadioStationByStationUUID(stationuuid)

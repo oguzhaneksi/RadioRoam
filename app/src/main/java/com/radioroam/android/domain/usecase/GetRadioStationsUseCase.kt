@@ -7,6 +7,8 @@ import androidx.paging.map
 import com.radioroam.android.data.repository.RadioStationRepository
 import com.radioroam.android.domain.util.map
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class GetRadioStationsUseCase(
@@ -17,9 +19,11 @@ class GetRadioStationsUseCase(
     fun execute(
         countryCode: String = telephonyManager.networkCountryIso
     ): Flow<PagingData<MediaItem>> {
-        return repository.getRadioStationsByCountry(countryCode).map { pagingSource ->
-            pagingSource.map {
-                it.map(repository.getFavoriteRadioStationByStationUUID(it.stationuuid) != null)
+        val pagingDataFlow = repository.getRadioStationsByCountry(countryCode)
+        val favoriteStations = repository.getFavoriteRadioStations()
+        return pagingDataFlow.map { pagingData ->
+            pagingData.map { radioStation ->
+                radioStation.map(favoriteStations.first().any { it.stationuuid == radioStation.stationuuid })
             }
         }
     }

@@ -12,7 +12,7 @@ class GetFavoriteRadioStationsUseCase(
     private val repository: RadioStationRepository
 ) {
 
-    fun execute(): Flow<PagingData<MediaItem>> = repository.getFavoriteRadioStations().map { list ->
+    fun execute(): Flow<List<MediaItem>> = repository.getFavoriteRadioStations().map { list ->
         list.map {
             it.map(true)
         }

@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.radioroam.android.BuildConfig
 import com.radioroam.android.data.database.AppDatabase
 import com.radioroam.android.data.datasource.RadioStationsRemoteDataSource
+import com.radioroam.android.data.network.ApiEndpoints
 import com.radioroam.android.data.network.ApiService
 import com.radioroam.android.data.network.ApiServiceImpl
 import com.radioroam.android.data.repository.RadioStationRepository
@@ -34,7 +35,7 @@ val appModule = module {
 
             defaultRequest {
                 url {
-                    host = BuildConfig.API_HOST
+                    host = ApiEndpoints.API_HOST
                     url { protocol = URLProtocol.HTTPS }
                 }
             }

@@ -19,14 +19,13 @@ class FavoritesViewModel(
     private val getFavoriteRadioStationsUseCase: GetFavoriteRadioStationsUseCase,
     private val addToOrRemoveFromFavoritesUseCase: AddToOrRemoveFromFavoritesUseCase
 ): ViewModel() {
-    private val _favorites = MutableStateFlow<PagingData<MediaItem>>(PagingData.empty())
+    private val _favorites = MutableStateFlow<List<MediaItem>>(emptyList())
     val favorites = _favorites.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getFavoriteRadioStationsUseCase.execute()
                 .distinctUntilChanged()
-                .cachedIn(viewModelScope)
                 .collect {
                     _favorites.emit(it)
                 }

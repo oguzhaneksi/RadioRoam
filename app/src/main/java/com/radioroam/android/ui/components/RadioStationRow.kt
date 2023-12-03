@@ -26,12 +26,12 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import coil.compose.AsyncImage
 import com.radioroam.android.R
-import com.radioroam.android.domain.util.FAVORITE_ARG
 
 @Composable
 fun RadioStationRow(
     modifier: Modifier = Modifier,
     item: MediaItem,
+    isFavorite: Boolean,
     onFavClick: (MediaItem) -> Unit
 ) {
     Row(
@@ -79,7 +79,6 @@ fun RadioStationRow(
                 }
             }
         }
-        val isFavorite = item.mediaMetadata.extras?.getBoolean(FAVORITE_ARG) == true
         IconButton(onClick = { onFavClick(item)}) {
             Icon(
                 imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
@@ -104,6 +103,7 @@ fun RadioStationRowPreview() {
                 .setGenre("Rock")
                 .build())
             .build(),
+        isFavorite = false,
         onFavClick = {}
     )
 }

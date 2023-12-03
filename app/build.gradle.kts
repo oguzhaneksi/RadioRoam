@@ -19,14 +19,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val localFile = rootProject.file("local.properties")
-
-        if (localFile.exists()) {
-            val properties = Properties()
-            properties.load(FileInputStream(localFile))
-            buildConfigField("String", "API_HOST", properties["API_HOST"].toString())
-        }
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
