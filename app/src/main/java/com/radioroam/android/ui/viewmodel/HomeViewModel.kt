@@ -25,8 +25,8 @@ class HomeViewModel(
     private val _state = MutableStateFlow<PagingData<MediaItem>>(PagingData.empty())
     val state = _state.asStateFlow()
 
-    private val _isPlayerSetUp = MutableStateFlow(false)
-    val isPlayerSetUp = _isPlayerSetUp.asStateFlow()
+//    private val _isPlayerSetUp = MutableStateFlow(false)
+//    val isPlayerSetUp = _isPlayerSetUp.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,11 +39,11 @@ class HomeViewModel(
         }
     }
 
-    fun setupPlayer() {
-        _isPlayerSetUp.update {
-            true
-        }
-    }
+//    fun setupPlayer() {
+//        _isPlayerSetUp.update {
+//            true
+//        }
+//    }
 
     fun addOrRemoteFavorites(item: MediaItem) {
         viewModelScope.launch(Dispatchers.IO) {

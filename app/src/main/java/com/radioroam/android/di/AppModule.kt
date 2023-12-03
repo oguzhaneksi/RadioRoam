@@ -15,6 +15,7 @@ import com.radioroam.android.domain.usecase.GetFavoriteRadioStationsUseCase
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
 import com.radioroam.android.ui.viewmodel.FavoritesViewModel
 import com.radioroam.android.ui.viewmodel.HomeViewModel
+import com.radioroam.android.ui.viewmodel.MainViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -75,6 +76,7 @@ val appModule = module {
     factory { GetRadioStationsUseCase(get(), get()) }
     factory { GetFavoriteRadioStationsUseCase(get()) }
     factory { AddToOrRemoveFromFavoritesUseCase(get()) }
+    viewModel { MainViewModel() }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { FavoritesViewModel(get(), get()) }
 }
