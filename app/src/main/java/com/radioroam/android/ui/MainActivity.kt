@@ -31,17 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.paging.LoadState
-import com.radioroam.android.ui.components.mediabrowser.rememberManagedMediaBrowser
 import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
-import com.radioroam.android.ui.navigation.Screen
-import com.radioroam.android.ui.screens.FavoritesScreen
-import com.radioroam.android.ui.screens.HomeScreen
+import com.radioroam.android.ui.navigation.AppNavHost
 import com.radioroam.android.ui.state.PlayerState
 import com.radioroam.android.ui.state.state
 import com.radioroam.android.ui.theme.AppTheme
@@ -72,14 +66,14 @@ class MainActivity : ComponentActivity() {
                             snackbarHost = {
                                 SnackbarHost(snackbarHostState)
                             }
-                        ) {
+                        ) { paddingValues ->
                             val isPlayerSetUp by mainViewModel.isPlayerSetUp.collectAsStateWithLifecycle()
 
-                            val browser by rememberManagedMediaBrowser()
+                            val mediaController by rememberManagedMediaController()
 
                             LaunchedEffect(key1 = isPlayerSetUp) {
                                 if (isPlayerSetUp) {
-                                    browser?.run {
+                                    mediaController?.run {
                                         if (mediaItemCount > 0) {
                                             prepare()
                                             play()
@@ -87,8 +81,6 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
-
-                            val mediaController by rememberManagedMediaController()
 
                             var playerState: PlayerState? by remember {
                                 mutableStateOf(mediaController?.state())
@@ -151,34 +143,23 @@ class MainActivity : ComponentActivity() {
                             }
 
                             Box(
-                                modifier = Modifier.fillMaxSize()
-                                    .padding(it)
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(paddingValues)
                             ) {
-                                NavHost(
+                                AppNavHost(
                                     navController = navController,
-                                    startDestination = Screen.Home.title
-                                ) {
-                                    composable(route = Screen.Home.title) {
-                                        HomeScreen(
-                                            navController = navController,
-                                            onNextPage = {
-                                                // Update MediaBrowser with the current list of items
-                                                val currentItems = it
-                                                browser?.updatePlaylist(currentItems)
-                                            },
-                                            onRadioStationClick = { index ->
-                                                mainViewModel.setupPlayer()
-                                                mediaController?.playMediaAt(index)
-                                            },
-                                            isPlayerSetUp = isPlayerSetUp
-                                        )
-                                    }
-                                    composable(route = Screen.Favorites.title) {
-                                        FavoritesScreen(
-                                            navController = navController
-                                        )
-                                    }
-                                }
+                                    onNextPage = {
+                                        // Update MediaController with the current list of items
+                                        val currentItems = it
+                                        mediaController?.updatePlaylist(currentItems)
+                                    },
+                                    onRadioStationClick = { index ->
+                                        mainViewModel.setupPlayer()
+                                        mediaController?.playMediaAt(index)
+                                    },
+                                    isPlayerSetUp = isPlayerSetUp
+                                )
 
                                 if (isPlayerSetUp && playerState != null) {
                                     CompactPlayerView(
