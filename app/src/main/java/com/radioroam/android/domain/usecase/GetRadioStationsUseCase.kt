@@ -2,27 +2,33 @@ package com.radioroam.android.domain.usecase
 
 import android.telephony.TelephonyManager
 import androidx.media3.common.MediaItem
-import androidx.paging.PagingData
-import androidx.paging.map
+import com.radioroam.android.data.network.NetworkResult
 import com.radioroam.android.data.repository.RadioStationRepository
+import com.radioroam.android.domain.model.RadioStation
 import com.radioroam.android.domain.util.map
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.firstOrNull
 
 class GetRadioStationsUseCase(
     private val repository: RadioStationRepository,
     private val telephonyManager: TelephonyManager
 ) {
 
-    fun execute(
-        countryCode: String = telephonyManager.networkCountryIso
-    ): Flow<PagingData<MediaItem>> {
-        val pagingDataFlow = repository.getRadioStationsByCountry(countryCode)
-        val favoriteStations = repository.getFavoriteRadioStations()
-        return pagingDataFlow.map { pagingData ->
-            pagingData.map { radioStation ->
-                radioStation.map(favoriteStations.first().any { it.stationuuid == radioStation.stationuuid })
+    suspend fun execute(
+        countryCode: String = telephonyManager.networkCountryIso,
+        page: Int = 0
+    ): Result<List<RadioStation>> {
+        val radioStationsFromApi = repository.getRadioStationsByCountry(countryCode, page)
+        val favoriteStations = repository.getFavoriteRadioStations().firstOrNull()
+        return when (radioStationsFromApi) {
+            is NetworkResult.Success -> {
+                Result.success(
+                    radioStationsFromApi.data?.map { radioStation ->
+                        radioStation.map(favoriteStations?.any { it.stationuuid == radioStation.stationuuid } == true)
+                    } ?: emptyList()
+                )
+            }
+            is NetworkResult.Error -> {
+                Result.failure(Exception(radioStationsFromApi.errorMessage))
             }
         }
     }

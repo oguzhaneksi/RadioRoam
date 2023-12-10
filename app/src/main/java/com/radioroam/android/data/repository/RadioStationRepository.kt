@@ -1,19 +1,10 @@
 package com.radioroam.android.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.radioroam.android.data.database.AppDatabase
 import com.radioroam.android.data.datasource.RadioStationsRemoteDataSource
 import com.radioroam.android.data.model.station.RadioStationDtoItem
-import com.radioroam.android.data.network.ApiService
 import com.radioroam.android.data.network.NetworkResult
-import com.radioroam.android.data.network.safeApiCall
-import com.radioroam.android.data.repository.paging.FavoriteRadioStationsPagingSource
-import com.radioroam.android.data.repository.paging.RadioStationsPagingSource
 import com.radioroam.android.data.util.ApiConstants
-import io.ktor.client.call.body
-import kotlinx.coroutines.flow.Flow
 
 
 class RadioStationRepository(
@@ -21,16 +12,16 @@ class RadioStationRepository(
     private val localDatabase: AppDatabase
 ) {
 
-    fun getRadioStationsByCountry(
+    suspend fun getRadioStationsByCountry(
         isoCountryCode: String,
+        page: Int = 0,
         pageSize: Int = ApiConstants.PAGE_SIZE
-    ): Flow<PagingData<RadioStationDtoItem>> {
-        return Pager(
-            config = PagingConfig(pageSize = pageSize, prefetchDistance = 2, enablePlaceholders = false),
-            pagingSourceFactory = {
-                RadioStationsPagingSource(dataSource, isoCountryCode, pageSize)
-            }
-        ).flow
+    ): NetworkResult<List<RadioStationDtoItem>> {
+        return dataSource.getRadioStationsByCountry(
+            isoCountryCode = isoCountryCode,
+            pageIndex = page,
+            pageSize = pageSize
+        )
     }
 
     fun getFavoriteRadioStations(

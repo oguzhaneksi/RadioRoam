@@ -4,12 +4,11 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
+import com.radioroam.android.domain.model.RadioStation
 import com.radioroam.android.domain.usecase.AddToOrRemoveFromFavoritesUseCase
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
 import com.radioroam.android.domain.util.FAVORITE_ARG
+import com.radioroam.android.paginator.DefaultPaginator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,49 +21,72 @@ class HomeViewModel(
     private val addToOrRemoveFromFavoritesUseCase: AddToOrRemoveFromFavoritesUseCase
 ): ViewModel() {
 
-    private val _state = MutableStateFlow<PagingData<MediaItem>>(PagingData.empty())
+    private val _state = MutableStateFlow(ScreenState(isLoading = true))
     val state = _state.asStateFlow()
 
-//    private val _isPlayerSetUp = MutableStateFlow(false)
-//    val isPlayerSetUp = _isPlayerSetUp.asStateFlow()
+    private val paginator = DefaultPaginator(
+        initialKey = state.value.page,
+        onLoadUpdated = {
+            _state.update { state ->
+                state.copy(isLoading = it)
+            }
+        },
+        onRequest = { nextPage ->
+            getRadioStationsUseCase.execute(page = nextPage)
+        },
+        getNextKey = {
+            state.value.page + 1
+        },
+        onError = {
+            _state.update { state ->
+                state.copy(error = it?.message)
+            }
+        },
+        onSuccess = { items, newKey ->
+            _state.update { state ->
+                state.copy(
+                    items = state.items + items,
+                    page = newKey,
+                    endReached = items.isEmpty()
+                )
+            }
+        }
+    )
 
     init {
+        loadNextItems()
+    }
+
+    fun loadNextItems() {
         viewModelScope.launch(Dispatchers.IO) {
-            getRadioStationsUseCase.execute()
-                .distinctUntilChanged()
-                .cachedIn(viewModelScope)
-                .collect {
-                    _state.emit(it)
-                }
+            paginator.loadNextItems()
         }
     }
 
-//    fun setupPlayer() {
-//        _isPlayerSetUp.update {
-//            true
-//        }
-//    }
-
-    fun addOrRemoteFavorites(item: MediaItem) {
+    fun addOrRemoteFavorites(item: RadioStation) {
         viewModelScope.launch(Dispatchers.IO) {
             addToOrRemoveFromFavoritesUseCase.execute(item)
-            // update the favorite state of each item in the paging data and trigger a recomposition
-            _state.update {
-                it.map { mediaItem ->
-                    if (mediaItem.mediaId == item.mediaId) {
-                        mediaItem.toggleFavoriteState()
-                    } else {
-                        mediaItem
+            // find the radio station by item id and update the favorite status
+            _state.update { state ->
+                state.copy(
+                    items = state.items.map { radioStation ->
+                        if (radioStation.id == item.id) {
+                            radioStation.copy(isFavorite = !radioStation.isFavorite)
+                        } else {
+                            radioStation
+                        }
                     }
-                }
+                )
             }
         }
     }
 
-    private fun MediaItem.toggleFavoriteState() = buildUpon().setMediaMetadata(
-        mediaMetadata.buildUpon().setExtras(
-            bundleOf(FAVORITE_ARG to !mediaMetadata.extras?.getBoolean(FAVORITE_ARG)!!)
-        ).build()
-    ).build()
-
 }
+
+data class ScreenState(
+    val isLoading: Boolean = false,
+    val items: List<RadioStation> = emptyList(),
+    val error: String? = null,
+    val endReached: Boolean = false,
+    val page: Int = 0
+)

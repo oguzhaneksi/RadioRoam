@@ -1,5 +1,6 @@
 package com.radioroam.android.ui.components
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,13 +27,14 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import coil.compose.AsyncImage
 import com.radioroam.android.R
+import com.radioroam.android.domain.model.RadioStation
 
 @Composable
 fun RadioStationRow(
     modifier: Modifier = Modifier,
-    item: MediaItem,
+    item: RadioStation,
     isFavorite: Boolean,
-    onFavClick: (MediaItem) -> Unit
+    onFavClick: (RadioStation) -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -50,7 +52,7 @@ fun RadioStationRow(
                     .fillMaxWidth(fraction = 0.2f)
                     .aspectRatio(1f)
                     .padding(8.dp),
-                model = item.mediaMetadata.artworkUri?.toString(),
+                model = item.favicon,
                 contentDescription = null,
                 placeholder = painterResource(id = R.drawable.radio),
                 error = painterResource(id = R.drawable.error)
@@ -63,15 +65,15 @@ fun RadioStationRow(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = item.mediaMetadata.displayTitle.toString(),
+                    text = item.name,
                     color = Color.Black,
                     maxLines = 1, // prevent text from wrapping
                     overflow = TextOverflow.Ellipsis // add ellipsis when text is too long
                 )
-                val genres = item.mediaMetadata.genre
-                if (genres?.isNotEmpty() == true) {
+                val genres = item.genres
+                if (genres.isNotEmpty()) {
                     Text(
-                        text = genres.toString(),
+                        text = genres.joinToString("|"),
                         color = Color.Black,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -97,12 +99,14 @@ fun RadioStationRowPreview() {
             .height(100.dp)
             .background(Color.White)
             .padding(16.dp),
-        item = MediaItem.Builder()
-            .setMediaMetadata(MediaMetadata.Builder()
-                .setDisplayTitle("Stationasdsadsadsaadsadssaddasdasadssaddsaadsdas")
-                .setGenre("Rock")
-                .build())
-            .build(),
+        item = RadioStation(
+            id = "1",
+            name = "Radio Station",
+            url = Uri.EMPTY,
+            favicon = Uri.EMPTY,
+            genres = listOf("Pop", "Rock"),
+            isFavorite = false
+        ),
         isFavorite = false,
         onFavClick = {}
     )

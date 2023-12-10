@@ -12,7 +12,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.radioroam.android.ui.components.FavoriteTopAppBar
 import com.radioroam.android.ui.components.RadioStationList
-import com.radioroam.android.ui.components.RadioStationPaginatedList
 import com.radioroam.android.ui.viewmodel.FavoritesViewModel
 import org.koin.androidx.compose.koinViewModel
 

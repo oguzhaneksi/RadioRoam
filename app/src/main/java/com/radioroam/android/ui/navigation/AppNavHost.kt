@@ -5,13 +5,14 @@ import androidx.media3.common.MediaItem
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.radioroam.android.domain.model.RadioStation
 import com.radioroam.android.ui.screens.FavoritesScreen
 import com.radioroam.android.ui.screens.HomeScreen
 
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    onNextPage: (List<MediaItem>) -> Unit = {},
+    onNextPage: (List<RadioStation>) -> Unit = {},
     onRadioStationClick: (Int) -> Unit = {},
     isPlayerSetUp: Boolean = false
 ) {

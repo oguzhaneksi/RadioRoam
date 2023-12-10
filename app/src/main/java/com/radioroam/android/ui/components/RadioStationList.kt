@@ -12,14 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
+import com.radioroam.android.domain.model.RadioStation
 import com.radioroam.android.domain.util.FAVORITE_ARG
 
 @Composable
 fun RadioStationList(
     modifier: Modifier = Modifier,
-    items: List<MediaItem>,
+    items: List<RadioStation>,
     onItemClick: (Int) -> Unit = {},
-    onFavClick: (MediaItem) -> Unit = {}
+    onFavClick: (RadioStation) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -35,7 +36,7 @@ fun RadioStationList(
                         onItemClick(items.indexOf(item))
                     },
                 item = item,
-                isFavorite = item.mediaMetadata.extras?.getBoolean(FAVORITE_ARG) == true,
+                isFavorite = item.isFavorite,
                 onFavClick = onFavClick
             )
         }

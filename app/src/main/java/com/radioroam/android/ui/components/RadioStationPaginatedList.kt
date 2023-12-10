@@ -6,31 +6,38 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.MediaItem
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import com.radioroam.android.domain.util.FAVORITE_ARG
+import com.radioroam.android.domain.model.RadioStation
 import com.radioroam.android.ui.components.loading.LoadingNextPageItem
-import com.radioroam.android.ui.components.loading.PageLoader
+import com.radioroam.android.ui.viewmodel.ScreenState
 
 @Composable
 fun RadioStationPaginatedList(
     modifier: Modifier = Modifier,
-    items: LazyPagingItems<MediaItem>,
+    state: ScreenState,
+    onNextPage: () -> Unit,
     onItemClick: (Int) -> Unit = {},
-    onFavClick: (MediaItem) -> Unit = {}
+    onFavClick: (RadioStation) -> Unit = {}
 ) {
+    val scrollState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
+        state = scrollState
     ) {
         items(
-            count = items.itemCount
+            count = state.items.size
         ) { index ->
-            items[index]?.let { item ->
+            LaunchedEffect(scrollState) {
+                if (index >= state.items.size - 1 && !state.endReached && !state.isLoading) {
+                    onNextPage()
+                }
+            }
+            state.items[index].let { item ->
                 RadioStationRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -41,35 +48,14 @@ fun RadioStationPaginatedList(
                             onItemClick(index)
                         },
                     item = item,
-                    isFavorite = item.mediaMetadata.extras?.getBoolean(FAVORITE_ARG) == true,
+                    isFavorite = item.isFavorite,
                     onFavClick = onFavClick
                 )
             }
         }
-        items.apply {
-            when {
-                loadState.refresh is LoadState.Loading -> {
-                    item {
-                        PageLoader(
-                            modifier = Modifier
-                                .fillParentMaxSize()
-                        )
-                    }
-                }
-                loadState.refresh is LoadState.Error -> {
-                    // TODO implement error states
-                }
-
-                loadState.append is LoadState.Loading -> {
-                    item {
-                        LoadingNextPageItem()
-                    }
-
-                }
-
-                loadState.append is LoadState.Error -> {
-                    // TODO implement error states
-                }
+        item {
+            if (state.isLoading) {
+                LoadingNextPageItem()
             }
         }
     }

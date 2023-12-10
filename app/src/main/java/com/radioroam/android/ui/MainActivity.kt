@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.radioroam.android.domain.util.map
+import com.radioroam.android.domain.util.toMediaItem
 import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
 import com.radioroam.android.ui.components.player.ExpandedPlayerView
@@ -152,7 +154,7 @@ class MainActivity : ComponentActivity() {
                                     onNextPage = {
                                         // Update MediaController with the current list of items
                                         val currentItems = it
-                                        mediaController?.updatePlaylist(currentItems)
+                                        mediaController?.updatePlaylist(currentItems.map { item -> item.toMediaItem() })
                                     },
                                     onRadioStationClick = { index ->
                                         mainViewModel.setupPlayer()

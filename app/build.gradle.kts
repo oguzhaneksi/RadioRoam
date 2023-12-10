@@ -62,7 +62,7 @@ dependencies {
     val koinVersion = "3.5.0"
     val media3Version = "1.1.1"
     val coroutinesVersion = "1.7.3"
-    val pagingVersion = "3.2.1"
+//    val pagingVersion = "3.2.1"
     val roomVersion = "2.6.0"
     val navVersion = "2.7.5"
 
@@ -86,8 +86,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // Paging
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    implementation("androidx.paging:paging-compose:$pagingVersion")
+//    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+//    implementation("androidx.paging:paging-compose:$pagingVersion")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:$navVersion")
