@@ -14,7 +14,7 @@ RadioRoam is an advanced Android application designed for an exceptional radio s
 - **Diverse Radio Stations**: Streams a wide variety of stations.
 - **Efficient Data Management**: Uses Ktor for network operations and Kotlinx Serialization for data handling.
 - **Modern User Interface**: Developed with Jetpack Compose for an intuitive UI.
-- **Responsive Data Loading**: Implements Compose Paging for smooth data presentation.
+- **Responsive Data Loading**: Implements a custom paging for smooth data presentation.
 - **Asynchronous Operations**: Handled effectively with Kotlin Coroutines.
 - **Optimized Image Processing**: Utilizes Coil for efficient image loading and caching.
 
@@ -24,7 +24,6 @@ RadioRoam is an advanced Android application designed for an exceptional radio s
 - **Koin**: Dependency injection.
 - **Kotlinx Serialization**: JSON processing.
 - **Jetpack Compose**: UI development.
-- **Compose Paging**: Paginated data loading.
 - **Kotlin Coroutines**: Asynchronous task management.
 - **Jetpack Media3**: Media playback integrated with MediaSession.
 - **Coil**: Image loading with caching.
