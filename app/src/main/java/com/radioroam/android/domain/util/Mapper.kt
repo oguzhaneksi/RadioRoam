@@ -10,8 +10,6 @@ import com.radioroam.android.domain.model.RadioStation
 import com.radioroam.android.ui.utility.removeNonAlphanumericFirstChar
 import java.util.Locale
 
-const val FAVORITE_ARG = "favorite_arg"
-
 fun RadioStationDtoItem.map(isFavorite: Boolean): RadioStation {
     val genres = (tags?.split(",") ?: emptyList())
         .filter { genre ->

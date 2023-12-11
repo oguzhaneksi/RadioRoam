@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.radioroam.android.domain.util.map
 import com.radioroam.android.domain.util.toMediaItem
 import com.radioroam.android.ui.components.mediacontroller.rememberManagedMediaController
 import com.radioroam.android.ui.components.player.CompactPlayerView
@@ -63,16 +62,23 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
+                        // Create a SnackbarHostState for showing snackbars
                         val snackbarHostState = remember { SnackbarHostState() }
+
+                        // Create a Scaffold with a SnackbarHost
                         Scaffold(
                             snackbarHost = {
                                 SnackbarHost(snackbarHostState)
                             }
                         ) { paddingValues ->
+
+                            // Observe the player setup state
                             val isPlayerSetUp by mainViewModel.isPlayerSetUp.collectAsStateWithLifecycle()
 
+                            // Get the managed MediaController
                             val mediaController by rememberManagedMediaController()
 
+                            // Prepare and play the media when the player is set up
                             LaunchedEffect(key1 = isPlayerSetUp) {
                                 if (isPlayerSetUp) {
                                     mediaController?.run {
@@ -84,10 +90,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
+                            // Remember the player state
                             var playerState: PlayerState? by remember {
                                 mutableStateOf(mediaController?.state())
                             }
 
+                            // Update the player state when the MediaController changes
                             DisposableEffect(key1 = mediaController) {
                                 mediaController?.run {
                                     playerState = state()
@@ -97,6 +105,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
+                            // Show a snackbar when a player error occurs
                             LaunchedEffect(key1 = playerState?.playerError) {
                                 playerState?.playerError?.let { exception ->
                                     val result = snackbarHostState.showSnackbar(
@@ -110,12 +119,16 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
+                            // Remember the state of the bottom sheet
                             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+                            // Remember a CoroutineScope for launching coroutines
                             val coroutineScope = rememberCoroutineScope()
 
+                            // Remember whether the bottom sheet is open
                             var openBottomSheet by remember { mutableStateOf(false) }
 
+                            // Show the expanded player view in a bottom sheet when it's open
                             if (openBottomSheet && playerState != null) {
                                 ModalBottomSheet(
                                     onDismissRequest = {
@@ -144,11 +157,13 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
+                            // Create a Box that fills the maximum size and has padding
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(paddingValues)
                             ) {
+                                // Create the navigation host
                                 AppNavHost(
                                     navController = navController,
                                     onNextPage = {
@@ -163,6 +178,7 @@ class MainActivity : ComponentActivity() {
                                     isPlayerSetUp = isPlayerSetUp
                                 )
 
+                                // Show the compact player view when the player is set up
                                 if (isPlayerSetUp && playerState != null) {
                                     CompactPlayerView(
                                         modifier = Modifier

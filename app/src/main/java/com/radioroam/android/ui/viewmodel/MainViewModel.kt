@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.update
 
 class MainViewModel: ViewModel() {
 
+    // This variable is used to determine if the user is clicked on a radio station to play at least once
     private val _isPlayerSetUp = MutableStateFlow(false)
     val isPlayerSetUp = _isPlayerSetUp.asStateFlow()
 

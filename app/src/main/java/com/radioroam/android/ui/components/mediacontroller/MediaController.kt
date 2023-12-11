@@ -13,6 +13,12 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.radioroam.android.ui.service.PlaybackService
 
+/**
+ * A Composable function that provides a managed MediaController instance.
+ *
+ * @param lifecycle The lifecycle of the owner of this MediaController. Defaults to the lifecycle of the LocalLifecycleOwner.
+ * @return A State object containing the MediaController instance. The Composable will automatically re-compose whenever the state changes.
+ */
 @Composable
 fun rememberManagedMediaController(
     lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -21,6 +27,7 @@ fun rememberManagedMediaController(
     val appContext = LocalContext.current.applicationContext
     val controllerManager = remember { MediaControllerManager.getInstance(appContext) }
 
+    // Observe the lifecycle to initialize and release the MediaController at the appropriate times.
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -30,14 +37,17 @@ fun rememberManagedMediaController(
             }
         }
         lifecycle.addObserver(observer)
-        onDispose {
-            lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycle.removeObserver(observer) }
     }
 
     return controllerManager.controller
 }
 
+/**
+ * A Singleton class that manages a MediaController instance.
+ *
+ * This class observes the Remember lifecycle to release the MediaController when it's no longer needed.
+ */
 @Stable
 internal class MediaControllerManager private constructor(context: Context) : RememberObserver {
     private val appContext = context.applicationContext
@@ -45,48 +55,41 @@ internal class MediaControllerManager private constructor(context: Context) : Re
     var controller = mutableStateOf<MediaController?>(null)
         private set
 
-    init {
-        setupFactory()
-    }
+    init { initialize() }
 
+    /**
+     * Initializes the MediaController.
+     *
+     * If the MediaController has not been built or has been released, this method will build a new one.
+     */
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-    private fun setupFactory() {
+    internal fun initialize() {
         if (factory == null || factory?.isDone == true) {
             factory = MediaController.Builder(
                 appContext,
                 SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java))
             ).buildAsync()
         }
-    }
-
-    internal fun initialize() {
-        setupFactory()
         factory?.addListener(
-            { setupController() },
+            { controller.value = factory?.let { if (it.isDone) it.get() else null } },
             MoreExecutors.directExecutor()
         )
     }
 
+    /**
+     * Releases the MediaController.
+     *
+     * This method will release the MediaController and set the controller state to null.
+     */
     internal fun release() {
         factory?.let {
             MediaController.releaseFuture(it)
-            updateControllerState()
+            controller.value = null
         }
         factory = null
     }
 
-    private fun setupController() {
-        updateControllerState()
-    }
-
-    private fun updateControllerState() {
-        controller.value = factory?.let {
-             if (it.isDone) it.get() else null
-        } ?: run {
-            null
-        }
-    }
-
+    // Lifecycle methods for the RememberObserver interface.
     override fun onAbandoned() { release() }
     override fun onForgotten() { release() }
     override fun onRemembered() {}
@@ -95,6 +98,12 @@ internal class MediaControllerManager private constructor(context: Context) : Re
         @Volatile
         private var instance: MediaControllerManager? = null
 
+        /**
+         * Returns the Singleton instance of the MediaControllerManager.
+         *
+         * @param context The context to use when creating the MediaControllerManager.
+         * @return The Singleton instance of the MediaControllerManager.
+         */
         fun getInstance(context: Context): MediaControllerManager {
             return instance ?: synchronized(this) {
                 instance ?: MediaControllerManager(context).also { instance = it }

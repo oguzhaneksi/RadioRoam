@@ -1,18 +1,10 @@
 package com.radioroam.android.domain
 
-import com.radioroam.android.data.mockRadioStationDtoItems
-import com.radioroam.android.data.network.NetworkResult
 import com.radioroam.android.data.repository.RadioStationRepository
-import com.radioroam.android.domain.state.RadioStationsUiState
 import com.radioroam.android.domain.usecase.GetRadioStationsUseCase
-import com.radioroam.android.domain.util.map
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -23,10 +15,10 @@ class GetRadioStationsUseCaseTest {
     @Mock
     private lateinit var repository: RadioStationRepository
 
-    @Before
-    fun setUp() {
-        useCase = GetRadioStationsUseCase(repository)
-    }
+//    @Before
+//    fun setUp() {
+//        useCase = GetRadioStationsUseCase(repository)
+//    }
 
 //    @Test
 //    fun `execute returns success state when repository fetches data successfully`() = runTest {
